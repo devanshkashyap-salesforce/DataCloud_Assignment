@@ -1,0 +1,90 @@
+.custom-justify-between {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100%;
+}
+
+.custom-full-width {
+    width: 100% !important;
+    display: block !important;
+}
+
+.custom-full-width button,
+.custom-full-width lightning-button {
+    width: 100% !important;
+}
+
+.custom-bold-text {
+    font-weight: bold !important;
+}
+
+.custom-clickable-zone {
+    cursor: pointer !important;
+}
+
+.custom-display-block {
+    display: block !important;
+}
+
+.custom-radius-small {
+    border-radius: 4px !important;
+}
+
+.custom-text-brand {
+    color: #0176d3 !important;
+    text-decoration: none !important;
+}
+
+.custom-flex-header-container {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.custom-intent-label-style {
+    font-size: 14px !important;
+    color: #2b303a !important;
+}
+
+/* Agentforce AI Layout Theme Panels */
+.custom-ai-panel {
+    background-color: #011e41 !important;
+    border-radius: 4px !important;
+}
+
+.custom-ai-heading {
+    color: #ffffff !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.custom-border-left-highlight {
+    border-left: 5px solid #2e844a !important;
+}
+
+.custom-markdown-styling {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    color: #2b303a !important;
+}
+
+.custom-fixed-card-height {
+    min-height: 82px !important;
+}
+
+/* Presentation Transition Layout Effects */
+.animate-fade-in {
+    animation: fadeInLayoutEffect 0.35s ease-in-out !important;
+}
+
+@keyframes fadeInLayoutEffect {
+    from { 
+        opacity: 0; 
+        transform: translateY(3px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
+}

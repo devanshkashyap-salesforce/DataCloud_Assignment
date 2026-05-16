@@ -1,0 +1,137 @@
+<template>
+    <lightning-card title="Einstein Customer Insights Dashboard" icon-name="standard:einstein">
+        <div class="slds-p-around_medium">
+            
+            <div class="slds-box slds-theme_default slds-m-bottom_medium">
+                <div class="slds-grid slds-gutters slds-grid_vertical-align-center slds-wrap">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3 slds-m-bottom_small slds-medium-m-bottom_none">
+                        <lightning-input 
+                            type="text" 
+                            label="Customer / Visitor ID Index Search" 
+                            placeholder="Enter Visitor ID (e.g. V2001, V2002)..."
+                            value={searchId} 
+                            onchange={handleIdChange}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-top_large">
+                        <lightning-button 
+                            label={searchButtonLabel} 
+                            variant="brand" 
+                            onclick={handleSubmit} 
+                            icon-name={searchButtonIcon}
+                            disabled={isLoading}
+                            class="custom-full-width">
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+
+            <template if:true={isLoading}>
+                <div class="slds-p-around_large slds-position_relative slds-m-vertical_medium">
+                    <lightning-spinner alternative-text="Querying Data Cloud Records..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <template if:true={customerData}>
+                <div class="animate-fade-in slds-m-top_medium">
+                    
+                    <div class="slds-box slds-theme_shade slds-m-bottom_medium">
+                        <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small">
+                            <lightning-icon icon-name="standard:contact" size="small" class="slds-m-right_small"></lightning-icon>
+                            <h3 class="slds-text-heading_small custom-bold-text">Core Profile Identifiers</h3>
+                        </div>
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-vertical_x-small">
+                                <span class="slds-text-title slds-text-color_weak">Full Name Reference</span>
+                                <p class="slds-text-body_regular custom-bold-text">{customerData.FullName}</p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-vertical_x-small">
+                                <span class="slds-text-title slds-text-color_weak">Email Address</span>
+                                <p class="slds-text-body_regular">{customerData.Email}</p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-vertical_x-small">
+                                <span class="slds-text-title slds-text-color_weak">Phone Contact</span>
+                                <p class="slds-text-body_regular">{customerData.Phone}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small slds-medium-m-bottom_none">
+                            <div class="slds-box slds-theme_default">
+                                <div class="custom-justify-between slds-m-bottom_x-small">
+                                    <span class="slds-text-title custom-bold-text slds-text-color_weak">Calculated Engagement Score</span>
+                                    <span class="slds-text-heading_small custom-bold-text custom-text-brand">{customerData.EngagementScore}%</span>
+                                </div>
+                                <lightning-progress-bar value={customerData.EngagementScore} size="large"></lightning-progress-bar>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                            <div class="slds-box slds-theme_default custom-fixed-card-height">
+                                <span class="slds-text-title custom-bold-text slds-text-color_weak custom-display-block slds-m-bottom_x-small">Calculated Intent Persona</span>
+                                <div class="slds-grid slds-grid_vertical-align-center slds-m-top_x-small">
+                                    <lightning-icon icon-name={intentIcon} size="x-small" variant={intentIconVariant} class="slds-m-right_x-small"></lightning-icon>
+                                    <span class="custom-bold-text custom-intent-label-style">{customerData.IntentLevel}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-box slds-theme_default slds-m-bottom_medium">
+                        <div class="custom-justify-between custom-clickable-zone" onclick={toggleActivitySection}>
+                            <span class="custom-bold-text">📊 Recent Stream Web Interactions ({activitiesCount})</span>
+                            <span class="custom-text-brand custom-bold-text">{toggleButtonLabel}</span>
+                        </div>
+                        <template if:true={isActivityExpanded}>
+                            <div class="slds-m-top_medium slds-border_top slds-p-top_small animate-fade-in">
+                                <template for:each={customerData.activities} for:item="act">
+                                    <div key={act.session} class="slds-p-around_x-small slds-m-bottom_x-small slds-theme_shade custom-radius-small">
+                                        <p>Focused on web category <strong class="custom-text-brand">{act.category}</strong> | Reference Log: {act.session}</p>
+                                        <p class="slds-text-color_weak">Examined item product target: <strong class="custom-bold-text">{act.product}</strong></p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="slds-box custom-ai-panel slds-p-around_medium">
+                        <div class="custom-justify-between slds-wrap">
+                            <div class="slds-col slds-m-bottom_small slds-medium-m-bottom_none">
+                                <div class="custom-flex-header-container">
+                                    <lightning-icon icon-name="utility:einstein" variant="inverse" size="small" class="slds-m-right_small"></lightning-icon>
+                                    <span class="custom-ai-heading custom-display-block">Agentforce Recommendation</span>
+                                </div>
+                            </div>
+                            <div class="slds-col">
+                                <lightning-button 
+                                    variant="success" 
+                                    label={aiButtonLabel} 
+                                    icon-name={aiButtonIcon}
+                                    onclick={handleGetRecommendation}
+                                    disabled={aiLoading}>
+                                </lightning-button>
+                            </div>
+                        </div>
+
+                        <template if:true={recommendation}>
+                            <div class="slds-box slds-theme_default custom-border-left-highlight slds-m-top_medium animate-fade-in">
+                                <p class="custom-markdown-styling">{recommendation}</p>
+                            </div>
+                        </template>
+                    </div>
+
+                </div>
+            </template>
+
+            <template if:true={errorMessage}>
+                <div class="slds-box slds-theme_error slds-theme_alert-texture slds-m-top_medium animate-fade-in">
+                    <div class="custom-flex-header-container">
+                        <lightning-icon icon-name="utility:ban" variant="inverse" size="x-small" class="slds-m-right_small"></lightning-icon>
+                        <p class="custom-bold-text slds-text-heading_small slds-text-color_inverse">{errorMessage}</p>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>
